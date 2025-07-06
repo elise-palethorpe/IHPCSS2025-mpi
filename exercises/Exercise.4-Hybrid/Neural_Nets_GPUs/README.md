@@ -101,27 +101,27 @@ These flags control the behavior of the program at runtime. You can combine mult
 
 ### 1. Train the model using MPI pipeline parallelism with 6 cores:
 ```bash
-mpirun.openmpi -np 6 python testing.py --train --model_p_MPI
+mpirun.openmpi -np 6 python main.py --train --model_p_MPI
 ```
 
 ### 2. Train the model using serial training:
 ```bash
-python testing.py --train
+python main.py --train
 ```
 
 ### 3. Predict using a trained model with USD currency:
 
 ```bash
-python testing.py --predict --currency USD
+python main.py --predict --currency USD
 ```
 
 ### 4. Train the model using GPU in data parallel mode:
 
 ```bash
-python testing.py --train --gpu
+python main.py --train --gpu
 ```
 ### 5. Train the model using GPU on multiple GPUs in model parallel mode (ex: using 2 GPUs):
 
 ```bash
-mpirun.openmpi -np 2 python testing.py --train --model_p_MPI --gpu
+mpirun.openmpi -np 2 python main.py --train --model_p_MPI --gpu
 ```
