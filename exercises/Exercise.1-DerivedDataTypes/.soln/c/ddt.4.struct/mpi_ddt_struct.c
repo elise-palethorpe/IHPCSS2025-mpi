@@ -68,6 +68,9 @@ int main(int argc, char *argv[])  {
     MPI_Type_commit(&particletype);
     /* ===================================================================== */
 
+    // post recv first! all tasks receive particletype data
+    MPI_Recv(p, NELEM, particletype, source, tag, MPI_COMM_WORLD, &stat);
+    
     // task 0 initializes the particle array and then sends it to each task
     if (rank == 0) {
         for (i=0; i<NELEM; i++) {
@@ -82,9 +85,6 @@ int main(int argc, char *argv[])  {
             MPI_Send(particles, NELEM, particletype, i, tag, MPI_COMM_WORLD);
         }
     }
-
-    // all tasks receive particletype data
-    MPI_Recv(p, NELEM, particletype, source, tag, MPI_COMM_WORLD, &stat);
 
     printf("rank= %d   %3.2f %3.2f %3.2f %3.2f %d %d\n", rank,p[3].x,
            p[3].y,p[3].z,p[3].velocity,p[3].n,p[3].type);
