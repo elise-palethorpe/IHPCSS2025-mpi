@@ -51,6 +51,9 @@ int main(int argc, char *argv[])  {
     /* ===================================================================== */
 
     if (numtasks == SIZE) {
+        // Post recv first! all tasks receive columntype data from task 0
+        MPI_Recv(b, SIZE, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &stat);
+        
         // task 0 sends one element of columntype to all tasks
         if (rank == 0) {
             /* =================================================================== */
@@ -87,8 +90,6 @@ int main(int argc, char *argv[])  {
             /* =================================================================== */
         }
 
-        // all tasks receive columntype data from task 0
-        MPI_Recv(b, SIZE, MPI_FLOAT, source, tag, MPI_COMM_WORLD, &stat);
         printf("rank= %d  b= %3.1f %3.1f %3.1f %3.1f\n",
                 rank,b[0],b[1],b[2],b[3]);
     } else {
