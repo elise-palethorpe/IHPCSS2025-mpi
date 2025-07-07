@@ -53,6 +53,10 @@ program vector
     ! =====================================================================
 
     if (numtasks .eq. SIZE) then
+        ! post recv first! all tasks receive rowtype data from task 0
+        source = 0
+        call MPI_RECV(b, SIZE, MPI_REAL, source, tag, MPI_COMM_WORLD, stat, ierr)
+        
         ! task 0 sends one element of rowtype to all tasks
         if (rank .eq. 0) then
             ! ===================================================================
@@ -89,10 +93,6 @@ program vector
             end do
             ! ===================================================================
         endif
-
-        ! all tasks receive rowtype data from task 0
-        source = 0
-        call MPI_RECV(b, SIZE, MPI_REAL, source, tag, MPI_COMM_WORLD, stat, ierr)
         print *, 'rank= ',rank,' b= ',b
     else
         print *, 'Must specify',SIZE,' processors.  Terminating.' 
