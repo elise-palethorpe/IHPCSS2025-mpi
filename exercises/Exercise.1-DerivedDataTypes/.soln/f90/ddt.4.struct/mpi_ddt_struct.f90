@@ -68,6 +68,11 @@ program struct
     call MPI_TYPE_COMMIT(particletype, ierr)
     ! =====================================================================
 
+    ! post recv first! all tasks receive particletype data
+    source = 0
+    call MPI_RECV(p, NELEM, particletype, source, tag, &
+                  MPI_COMM_WORLD, stat, ierr)
+                  
     ! task 0 initializes the particle array and then sends it to each task
     if (rank .eq. 0) then
         do i=1, NELEM
@@ -79,11 +84,6 @@ program struct
                           MPI_COMM_WORLD, ierr)
         end do
     endif
-
-    ! all tasks receive particletype data
-    source = 0
-    call MPI_RECV(p, NELEM, particletype, source, tag, &
-                  MPI_COMM_WORLD, stat, ierr)
 
     print *, 'rank= ',rank,' p(3)= ',p(3)
 
