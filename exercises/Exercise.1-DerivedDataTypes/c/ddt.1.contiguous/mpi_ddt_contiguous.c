@@ -38,9 +38,9 @@ int main(int argc, char *argv[])  {
      *       newtype
      *           new datatype (handle)
      */
-    // TODO: create the contiguous data type
 
-    // TODO: commit the new derived datatype 
+    MPI_Type_contiguous(SIZE, MPI_FLOAT, &rowtype);
+    MPI_Type_commit(&rowtype);
 
     /* ===================================================================== */
     
@@ -75,8 +75,7 @@ int main(int argc, char *argv[])  {
               *         communicator (handle)
               */
             for (i=0; i<numtasks; i++) {
-                // TODO: send each ROW i of the array 'a' using the derived data type.
-                
+                MPI_Send(a[i], 1, rowtype, i, tag, MPI_COMM_WORLD);
             }
             /* =================================================================== */
         }

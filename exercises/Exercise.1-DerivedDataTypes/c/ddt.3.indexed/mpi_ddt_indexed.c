@@ -44,17 +44,14 @@ int main(int argc, char *argv[])  {
      *          new datatype (handle)
      */
     // NOTE: We want the the resulting values of b[] to be {6.0 7.0 8.0 9.0 13.0 14.0}.
-    // TODO: fill in the values for blocklengths
-    blocklengths[0] = //TODO ;
-    blocklengths[1] = //TODO ;
+    blocklengths[0] = 4;
+    blocklengths[1] = 2;
 
-    // TODO: fill in the values for the displacements
-    displacements[0] = //TODO ;
-    displacements[1] = //TODO ;
+    displacements[0] = 5;
+    displacements[1] = 12;
     
-    // TODO: create the indexed data type
-
-    // TODO: commit the new derived datatype 
+    MPI_Type_indexed(2, blocklengths, displacements, MPI_FLOAT, &indextype);
+    MPI_Type_commit(&indextype);
 
     /* ===================================================================== */
 

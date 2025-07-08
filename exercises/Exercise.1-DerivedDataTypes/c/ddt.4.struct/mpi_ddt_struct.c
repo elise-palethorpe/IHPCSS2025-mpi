@@ -16,8 +16,7 @@ int main(int argc, char *argv[])  {
     int blockcounts[2];
 
     // MPI_Aint type used to be consistent with syntax of
-    // MPI_Type_extent routine
-    MPI_Aint offsets[2], extent;
+    MPI_Aint offsets[2];
     MPI_Status stat;
 
     MPI_Init(&argc,&argv);
@@ -50,21 +49,22 @@ int main(int argc, char *argv[])  {
      *      newtype
      *          new datatype (handle)
      */
-    // TODO: setup description of the 4 MPI_FLOAT fields x, y, z, velocity
-    offsets[0] = //TODO;
-    oldtypes[0] = //TODO;
-    blockcounts[0] = //TODO;
 
-    // TODO: setup description of the 2 MPI_INT fields n, type.
-    //      We first figure offset by getting size of MPI_FLOAT
-    MPI_Type_extent(MPI_FLOAT, &extent);
-    offsets[1] = //TODO; HINT: how many 'extent's do we need?
-    oldtypes[1] = //TODO;
-    blockcounts[1] = //TODO;
+    Particle par;
+    MPI_Aint base, member_offset;
+    MPI_Get_address(&par, &base);
+    MPI_Get_address(&par.x, &member_offset);
+    offsets[0] = member_offset - base;
+    oldtypes[0] = MPI_FLOAT;
+    blockcounts[0] = 4;
+
+    MPI_Get_address(&par.n, &member_offset);
+    offsets[1] = member_offset - base;
+    oldtypes[1] = MPI_INT;
+    blockcounts[1] = 2;
     
-    // TODO: create the struct data type
-
-    // TODO: commit the new derived datatype 
+    MPI_Type_struct(2, blockcounts, offsets, oldtypes, &particletype);
+    MPI_Type_commit(&particletype);
 
     /* ===================================================================== */
 
@@ -78,16 +78,15 @@ int main(int argc, char *argv[])  {
             particles[i].n = i;
             particles[i].type = i % 2; 
         }
-        for (i=0; i<numtasks; i++) {
+        for (i=1; i<numtasks; i++) {
             MPI_Send(particles, NELEM, particletype, i, tag, MPI_COMM_WORLD);
         }
+    } else {
+      MPI_Recv(p, NELEM, particletype, source, tag, MPI_COMM_WORLD, &stat);
+
+      printf("rank= %d   %3.2f %3.2f %3.2f %3.2f %d %d\n", rank,p[3].x,
+             p[3].y,p[3].z,p[3].velocity,p[3].n,p[3].type);
     }
-
-    // all tasks receive particletype data
-    MPI_Recv(p, NELEM, particletype, source, tag, MPI_COMM_WORLD, &stat);
-
-    printf("rank= %d   %3.2f %3.2f %3.2f %3.2f %d %d\n", rank,p[3].x,
-           p[3].y,p[3].z,p[3].velocity,p[3].n,p[3].type);
 
     // free datatype when done using it
     MPI_Type_free(&particletype);

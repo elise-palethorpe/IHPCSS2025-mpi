@@ -44,9 +44,8 @@ int main(int argc, char *argv[])  {
      *       newtype
      *          new datatype (handle)
      */
-    // TODO: create the vector data type
-
-    // TODO: commit the new derived datatype
+    MPI_Type_vector(SIZE, 1, SIZE, MPI_FLOAT, &columntype);
+    MPI_Type_commit(&columntype);
 
     /* ===================================================================== */
 
@@ -82,6 +81,7 @@ int main(int argc, char *argv[])  {
               */
             for (i=0; i<numtasks; i++) {
                 // TODO: send each COLUMN i of the array 'a' using the derived data type.
+                MPI_Send(&a[0][i], 1, columntype, i, tag, MPI_COMM_WORLD);
                 
             }
             /* =================================================================== */
